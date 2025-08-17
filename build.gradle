@@ -2,6 +2,9 @@ plugins {
 	id 'java'
 	id 'org.springframework.boot' version '3.5.4'
 	id 'io.spring.dependency-management' version '1.1.7'
+	// ▼ 추가
+	id 'jacoco'
+	id "org.sonarqube" version "5.1.0.4882"
 }
 
 group = 'com.ccn.userapi'
@@ -16,6 +19,8 @@ java {
 repositories {
 	mavenCentral()
 }
+
+
 
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
@@ -34,8 +39,34 @@ dependencies {
 	testImplementation 'org.springframework.security:spring-security-test'
 }
 
+
 tasks.named('test') {
 	useJUnitPlatform()
+}
+
+// ▼ 추가: 테스트 후 커버리지 리포트(xml) 생성
+jacocoTestReport {
+	dependsOn test
+	reports {
+		xml.required = true   // SonarQube가 이 XML을 읽습니다.
+		html.required = true
+		csv.required = false
+	}
+}
+
+// ▼ 추가: SonarQube 속성
+sonarqube {
+	properties {
+		property "sonar.projectKey", "userapi"
+		property "sonar.projectName", "User API"
+		property "sonar.sources", "src/main/java"
+		property "sonar.tests", "src/test/java"
+		property "sonar.java.binaries", "build/classes/java/main"
+		property "sonar.junit.reportPaths", "build/test-results/test"
+		property "sonar.coverage.jacoco.xmlReportPaths", "build/reports/jacoco/test/jacocoTestReport.xml"
+		property "sonar.java.source", "17"
+		property "sonar.sourceEncoding", "UTF-8"
+	}
 }
 
 test {
