@@ -18,7 +18,7 @@ spring:
       hibernate:
         format_sql: true
         dialect: org.hibernate.dialect.H2Dialect
-    show-sql: true
+    show-sql: false
 
   servlet:
     encoding:
